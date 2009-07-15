@@ -1,4 +1,4 @@
-package org.opensuse.osc;
+package org.opensuse.osc.api;
 
 import java.util.*;
 

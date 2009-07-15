@@ -1,4 +1,4 @@
-package org.opensuse.osc;
+package org.opensuse.osc.api;
 import org.w3c.dom.*;
 import javax.xml.xpath.*;
 import java.util.*;

@@ -1,4 +1,4 @@
-package org.opensuse.osc;
+package org.opensuse.osc.api;
 
 class Call {
 	protected Call(Api api, String command) {
