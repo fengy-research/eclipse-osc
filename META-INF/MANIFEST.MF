@@ -1,10 +1,20 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Osc Plug-in
-Bundle-SymbolicName: org.opensuse.osc
+Bundle-SymbolicName: org.opensuse.osc;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: org.opensuse.osc.Activator
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+Bundle-Activator: org.opensuse.osc.Plugin
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.workbench,
+ org.eclipse.core.commands,
+ org.eclipse.jface,
+ org.eclipse.jface.text,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.views,
+ org.eclipse.ui
+Export-Package: org.opensuse.osc, org.opensuse.osc.api
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

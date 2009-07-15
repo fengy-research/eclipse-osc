@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension point="org.eclipse.ui.newWizards">
+<!-- Project wizards -->
+<category name="OSC Project" id="org.opensuse.osc.ui.newProjectWizards" />
+<wizard
+	name="New OSC Project"
+	icon="icons/newcprj_wiz.gif"
+	category="org.opensuse.osc.ui.newProjectWizards"
+	id="org.opensuse.osc.ui.wizards.NewProjectWizard"
+	project="true"
+	class="org.opensuse.osc.ui.wizards.NewProjectWizard" />
+
+</extension>
+
+</plugin>
