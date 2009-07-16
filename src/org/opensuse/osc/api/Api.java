@@ -24,16 +24,6 @@ class Api {
 		this.password = password;
 	}
 
-	public String makeURL(Call call) {
-		StringBuffer sb = new StringBuffer();
-		sb.append(host);
-		if(call.command.charAt(0) != '/') {
-			sb.append('/');
-		}
-		sb.append(call.command);
-		/** @TODO: Add the parameters **/
-		return sb.toString();
-	}
 
 	public void issue(Call call) throws
 		MalformedURLException, IOException, SAXException {
@@ -48,24 +38,28 @@ class Api {
 			});
 		}
 
-		String urlstring = makeURL(call);
-		System.out.println(urlstring);
 		call.result = new Result(call);
 
-		URL url;
 		URLConnection connection;
 
 		call.result.status = Result.Status.ERROR;
-		url = new URL(urlstring);
-		connection = url.openConnection();
-		call.result.document = dombuilder.parse(connection.getInputStream());
+		connection = call.openConnection();
+
+		call.result.stream = connection.getInputStream();
+		String content_type = connection.getContentType();
+		if(content_type.startsWith("application/xml")) {
+			call.result.document = dombuilder.parse(call.result.stream);
+			call.result.type = Result.Type.RESPONSE;
+		} else {
+			call.result.type = Result.Type.STREAM;
+		}
 		call.result.status = Result.Status.OK;
 	}
 	private static DocumentBuilderFactory domfactory = DocumentBuilderFactory.newInstance();
 	private static XPathFactory xpathfactory = XPathFactory.newInstance();
 	protected static XPath xpath = xpathfactory.newXPath();
 	private DocumentBuilder dombuilder;
-	public Call newCall(String command) {
-		return new Call(this, command);
+	public Call newCall(String method, String path) {
+		return new Call(this, method, path);
 	}
 }

@@ -78,9 +78,9 @@ class Cli {
 
 		Call call;
 		if(args.size() != 0) {
-			call = api.newCall(args.get(0));
+			call = api.newCall(args.get(0), args.get(1));
 		} else {
-			call = api.newCall("about");
+			call = api.newCall("get", "about");
 		}
 		api.issue(call);
 
