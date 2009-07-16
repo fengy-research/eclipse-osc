@@ -87,7 +87,7 @@ class CommandLine {
 					if(args.size() > 1) {
 						names = args;
 					} else {
-						names = pac.getFileList();
+						names = pac.getFiles();
 					}
 					for(String fn : names) {
 						if(fn.equals("checkout")) continue;

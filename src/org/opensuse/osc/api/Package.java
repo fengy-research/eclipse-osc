@@ -1,5 +1,6 @@
 package org.opensuse.osc.api;
 import java.util.List;
+import java.util.ArrayList;
 
 import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
@@ -9,12 +10,19 @@ public class Package {
 	protected String project;
 	protected String pac;
 	protected Api api;
-	private List<String> filenames;
+	private List<String> localFiles;
+	private ArrayList<String> visibleLocalFiles;
+	private ArrayList<String> recursiveFiles;
+
 	private Package linkTarget;
 
-	public List<String> getFileList() {
-		return filenames;
+	public List<String> getLocalFiles() {
+		return localFiles;
 	}
+	public List<String> getFiles() {
+		return recursiveFiles;
+	}
+
 	public Package (Api api, String project, String pac) {
 		this.api = api;
 		this.project = project;
@@ -32,13 +40,12 @@ public class Package {
 		}
 	}
 	public boolean hasFile(String filename) {
-		for(String fn : filenames) {
-			if(fn.equals(filename)) {
-				return true;
-			}
-		}
-		return false;
+		return getFiles().indexOf(filename) != -1;
 	}
+	public boolean hasLocalFile(String filename) {
+		return getLocalFiles().indexOf(filename) != -1;
+	}
+
 	public Package branch() throws Exception {
 		Call call = api.newCall("post", "/source/" + encode(project) + "/" + encode(pac) + "?cmd=branch");
 		api.issue(call);
@@ -46,8 +53,12 @@ public class Package {
 	}
 	public InputStream checkout(String filename) throws Exception {
 		Package p = this;
-		while(p != null && !p.hasFile(filename)) {
+		while(p != null && !p.hasLocalFile(filename)) {
 			p = p.linkTarget;
+		}
+		if(p == null) {
+			/* Not found, resort to this project to obtain a fancy error report from osc */
+			p = this;
 		}
 		Call call = api.newCall("get", "/source/" + p.project + "/" + p.pac + "/" + filename);
 		api.issue(call);
@@ -58,7 +69,14 @@ public class Package {
 		Call call = api.newCall("get", "/source/" + encode(project) + "/" + encode(pac));
 		api.issue(call);
 		Result r = call.getResult();
-		filenames = r.queryList("//entry/@name");
+		localFiles = r.queryList("//entry/@name");
+		visibleLocalFiles = new ArrayList<String>();
+		recursiveFiles = new ArrayList<String>();
+		for(String s : localFiles) {
+			if(s.startsWith("_")) continue;
+			visibleLocalFiles.add(s);
+			recursiveFiles.add(s);
+		}
 		try {
 			String link_project = r.query("//linkinfo/@project");
 			String link_package = r.query("//linkinfo/@package");
@@ -70,6 +88,13 @@ public class Package {
 			linkTarget = null;
 			e.printStackTrace();
 		}
+		if(linkTarget != null) 
+			for(String s : linkTarget.getFiles()) {
+				if(recursiveFiles.indexOf(s) == -1) {
+					recursiveFiles.add(s);
+				}
+			}
+		
 	}
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
@@ -77,13 +102,11 @@ public class Package {
 		if(getIsLink()) {
 			sb.append("Linked: " + linkTarget.project + " " + linkTarget.pac + "\n");
 		}
-		if(filenames != null) {
-			sb.append("Files:\n");
-			for(String s :filenames) {
-				sb.append("  ");
-				sb.append(s);
-				sb.append('\n');
-			}
+		sb.append("Files:\n");
+		for(String s : getFiles()) {
+			sb.append("  ");
+			sb.append(s);
+			sb.append('\n');
 		}
 		return sb.toString();
 	}
