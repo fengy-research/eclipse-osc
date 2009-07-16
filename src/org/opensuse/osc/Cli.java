@@ -115,6 +115,7 @@ class Cli {
 			String c = null;
 			pac = api.refPackage(project, pacname);
 			pac.update();
+			System.out.println(pac.toString());
 			if(args.size() != 0) {
 				c = args.get(0);
 			}
@@ -126,7 +127,14 @@ class Cli {
 					pac.branch();
 				}
 				if(c.equals("checkout")) {
-					for(String fn : pac.getFilenames()) {
+					List<String> names = null;
+					if(args.size() > 1) {
+						names = args;
+					} else {
+						names = pac.getFilenames();
+					}
+					for(String fn : names) {
+						if(fn.equals("checkout")) continue;
 						InputStream stream = pac.checkout(fn);
 						System.out.println(stream.toString());
 						FileOutputStream fos = new FileOutputStream(fn);

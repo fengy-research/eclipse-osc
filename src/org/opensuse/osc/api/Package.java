@@ -10,6 +10,7 @@ public class Package {
 	protected String pac;
 	protected Api api;
 	private List<String> filenames;
+	private Package linkTarget;
 
 	public List<String> getFilenames() {
 		return filenames;
@@ -21,6 +22,7 @@ public class Package {
 	}
 	public String getProject() { return project; }
 	public String getPackage() { return pac; }
+	public boolean getIsLink() { return linkTarget != null; }
 
 	protected static String encode(String foo) {
 		try {
@@ -36,27 +38,38 @@ public class Package {
 	}
 	public InputStream checkout(String filename) throws Exception {
 		boolean found = false;
-		for(String s :filenames) {
-			if(s.equals(filename)) {
-				found = true;
-			}
-		}
-		if(found) {
-			Call call = api.newCall("get", "/source/" + encode(project) + "/" + encode(pac) + "/" + filename);
-			api.issue(call);
-			return call.result.stream;
-		}
-		return null;
+		Call call = api.newCall("get", "/source/" + encode(project) + "/" + encode(pac) + "/" + filename);
+		api.issue(call);
+		return call.result.stream;
 	}
 	public void update() throws Exception {
 		Call call = api.newCall("get", "/source/" + encode(project) + "/" + encode(pac));
 		api.issue(call);
-		filenames = call.getResult().queryList("//entry/@name");
+		Result r = call.getResult();
+		filenames = r.queryList("//entry/@name");
+		try {
+			String link_project = r.query("//linkinfo/@project");
+			String link_package = r.query("//linkinfo/@package");
+			if(link_project != null && link_package != null) {
+				linkTarget = api.refPackage(link_project, link_package);
+				linkTarget.update();
+			}
+		} catch (Exception e) {
+			linkTarget = null;
+			e.printStackTrace();
+		}
 	}
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		for(String s :filenames) {
-			sb.append(s);
+		if(getIsLink())
+			sb.append("Linked to :" + linkTarget.toString() + "\n");
+
+		else {
+			if(filenames != null) {
+				for(String s :filenames) {
+					sb.append(s);
+				}
+			}
 		}
 		return sb.toString();
 	}

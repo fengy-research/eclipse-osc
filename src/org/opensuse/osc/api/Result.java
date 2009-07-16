@@ -36,7 +36,10 @@ public class Result {
 	public String query(String path) throws XPathExpressionException {
 		XPathExpression expr = Api.xpath.compile(path);
 		Node r = (Node) expr.evaluate(document, XPathConstants.NODE);
+		if(r != null)
 		return r.getNodeValue();
+		else
+		return null;
 	}
 	public ArrayList<String> queryList(String path) throws XPathExpressionException {
 		XPathExpression expr = Api.xpath.compile(path);
