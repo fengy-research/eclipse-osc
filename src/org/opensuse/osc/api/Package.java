@@ -12,7 +12,7 @@ public class Package {
 	private List<String> filenames;
 	private Package linkTarget;
 
-	public List<String> getFilenames() {
+	public List<String> getFileList() {
 		return filenames;
 	}
 	public Package (Api api, String project, String pac) {
@@ -31,18 +31,30 @@ public class Package {
 			return foo;
 		}
 	}
+	public boolean hasFile(String filename) {
+		for(String fn : filenames) {
+			if(fn.equals(filename)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public Package branch() throws Exception {
 		Call call = api.newCall("post", "/source/" + encode(project) + "/" + encode(pac) + "?cmd=branch");
 		api.issue(call);
 		return new Package(api, "home:" + api.getUsername() + ":branches:" + project, pac);
 	}
 	public InputStream checkout(String filename) throws Exception {
-		boolean found = false;
-		Call call = api.newCall("get", "/source/" + encode(project) + "/" + encode(pac) + "/" + filename);
+		Package p = this;
+		while(p != null && !p.hasFile(filename)) {
+			p = p.linkTarget;
+		}
+		Call call = api.newCall("get", "/source/" + p.project + "/" + p.pac + "/" + filename);
 		api.issue(call);
 		return call.result.stream;
 	}
-	public void update() throws Exception {
+
+	public void fetch() throws Exception {
 		Call call = api.newCall("get", "/source/" + encode(project) + "/" + encode(pac));
 		api.issue(call);
 		Result r = call.getResult();
@@ -52,7 +64,7 @@ public class Package {
 			String link_package = r.query("//linkinfo/@package");
 			if(link_project != null && link_package != null) {
 				linkTarget = api.refPackage(link_project, link_package);
-				linkTarget.update();
+				linkTarget.fetch();
 			}
 		} catch (Exception e) {
 			linkTarget = null;
@@ -61,14 +73,16 @@ public class Package {
 	}
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		if(getIsLink())
-			sb.append("Linked to :" + linkTarget.toString() + "\n");
-
-		else {
-			if(filenames != null) {
-				for(String s :filenames) {
-					sb.append(s);
-				}
+		sb.append("Package:" + project + " " + pac +"\n");
+		if(getIsLink()) {
+			sb.append("Linked: " + linkTarget.project + " " + linkTarget.pac + "\n");
+		}
+		if(filenames != null) {
+			sb.append("Files:\n");
+			for(String s :filenames) {
+				sb.append("  ");
+				sb.append(s);
+				sb.append('\n');
 			}
 		}
 		return sb.toString();

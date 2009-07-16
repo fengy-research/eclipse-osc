@@ -33,9 +33,9 @@ public class Call {
 			sb.append('/');
 		}
 		sb.append(path);
-		/** @TODO: Add the parameters **/
-		System.out.println(sb.toString());
-		URL url = new URL(sb.toString());
+		String url_string = sb.toString();
+		System.out.printf("Method %s URL %s\n", method, url_string);
+		URL url = new URL(url_string);
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 		connection.setRequestMethod(method.toUpperCase());
 		if(method.toUpperCase().equals("POST")

@@ -114,7 +114,7 @@ class Cli {
 			String pacname = arg_map.get("package");
 			String c = null;
 			pac = api.refPackage(project, pacname);
-			pac.update();
+			pac.fetch();
 			System.out.println(pac.toString());
 			if(args.size() != 0) {
 				c = args.get(0);
@@ -131,7 +131,7 @@ class Cli {
 					if(args.size() > 1) {
 						names = args;
 					} else {
-						names = pac.getFilenames();
+						names = pac.getFileList();
 					}
 					for(String fn : names) {
 						if(fn.equals("checkout")) continue;
@@ -140,7 +140,7 @@ class Cli {
 						FileOutputStream fos = new FileOutputStream(fn);
 						BufferedInputStream bis = new BufferedInputStream(stream);
 						int n;
-						byte [] buffer = new byte[1000];
+						byte [] buffer = new byte[65536];
 						while((n = bis.read(buffer)) != -1) {
 							fos.write(buffer, 0, n);
 						}

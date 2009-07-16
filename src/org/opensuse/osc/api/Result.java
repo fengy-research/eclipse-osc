@@ -52,7 +52,7 @@ public class Result {
 	}
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("Type: " + type.toString() + "\n");
+		sb.append("--- Result Type: " + type.toString() + "--\n");
 		try {
 			TransformerFactory transfac = TransformerFactory.newInstance();
 			Transformer trans = transfac.newTransformer();
@@ -69,7 +69,7 @@ public class Result {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		sb.append("end");
+		sb.append("--- Result End -- ");
 		return sb.toString();
 	}
 }
