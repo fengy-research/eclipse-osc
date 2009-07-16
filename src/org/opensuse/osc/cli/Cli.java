@@ -1,57 +1,13 @@
-package org.opensuse.osc;
+package org.opensuse.osc.cli;
 
 import java.io.*;
 import java.util.List;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import org.opensuse.osc.api.*;
 
-class Cli {
-	private static class OptionEntry {
-		public String name;
-		public String short_name;
-		public String value;
-		public OptionEntry(String name, String short_name) {
-			this.name = name;
-			this.short_name = short_name;
-		}
-	}
-
-	private static class OptionParser {
-		/* Parse the arg, returns the remaining args */
-		public static HashMap<String, String> Parse(List<String> args, OptionEntry[] entries) {
-			int i = 0;
-			OptionEntry last_entry = null;
-			HashMap<String, String> hash = new HashMap<String, String>();
-			
-			while(i < args.size()) {
-				String arg = args.get(i);
-				boolean parsed = false;
-
-				if(last_entry != null) {
-					last_entry.value = arg;
-					parsed = true;
-					hash.put(last_entry.name, arg);
-					last_entry = null;
-				} else for(OptionEntry e: entries) {
-					if(arg.compareTo("--" + e.name) == 0
-					|| arg.compareTo("-" + e.short_name) == 0) {
-						parsed = true;
-						last_entry = e;
-					}
-				}
-				if(parsed){ 
-					args.remove(i);
-				} else {
-					i++;
-				}
-			}
-			return hash;
-		}
-
-	}
+class CommandLine {
 	public static void main(String[] raw_args) throws Exception {
 		List<String> args = new ArrayList<String>(Arrays.asList (raw_args));
 		OptionEntry [] entries = {
