@@ -5,7 +5,7 @@ import javax.xml.parsers.*;
 import javax.xml.xpath.*;
 import org.xml.sax.*;
 
-class Api {
+public class Api {
 	public Api(String newhost) {
 		host = newhost;
 		try {
@@ -47,7 +47,8 @@ class Api {
 
 		call.result.stream = connection.getInputStream();
 		String content_type = connection.getContentType();
-		if(content_type.startsWith("application/xml")) {
+		System.out.println(content_type);
+		if(content_type.matches("(application|text)/xml.*")) {
 			call.result.document = dombuilder.parse(call.result.stream);
 			call.result.type = Result.Type.RESPONSE;
 		} else {

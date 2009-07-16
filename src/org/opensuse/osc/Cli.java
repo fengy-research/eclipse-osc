@@ -1,6 +1,8 @@
-package org.opensuse.osc.api;
+package org.opensuse.osc;
 
 import java.util.*;
+import org.opensuse.osc.api.*;
+import org.opensuse.osc.commands.*;
 
 class Cli {
 	private static class OptionEntry {
@@ -52,7 +54,8 @@ class Cli {
 			new OptionEntry("username", "u"),
 			new OptionEntry("password", "p"),
 			new OptionEntry("host", "h"),
-			new OptionEntry("query", "q")
+			new OptionEntry("query", "q"),
+			new OptionEntry("mode", "m")
 		};
 		Map<String, String> arg_map = OptionParser.Parse(args, entries);
 		Map<String, String> env = System.getenv();
@@ -61,6 +64,7 @@ class Cli {
 		String username = arg_map.get("username");
 		String password = arg_map.get("password");
 		String query = arg_map.get("query");
+		String mode = arg_map.get("mode");
 
 
 		if(host == null) {
@@ -76,23 +80,50 @@ class Cli {
 		Api api = new Api(host);
 		api.setAuth(username, password);
 
-		Call call;
-		if(args.size() != 0) {
-			call = api.newCall(args.get(0), args.get(1));
-		} else {
-			call = api.newCall("get", "about");
-		}
-		api.issue(call);
+		if(mode != null && mode.equals("call")) {
+			Call call;
+			if(args.size() != 0) {
+				call = api.newCall(args.get(0), args.get(1));
+			} else {
+				call = api.newCall("get", "about");
+			}
+			api.issue(call);
 
-		System.out.println(call.getResult().getStatus().toString());
-		ArrayList<String> list;
-		if(query != null) {
-			list = call.getResult().queryList(query);
+			System.out.println(call.getResult().getStatus().toString());
+			ArrayList<String> list;
+			if(query != null) {
+				list = call.getResult().queryList(query);
+			} else {
+				list = call.getResult().queryList("//text()");
+			}
+			for(String str: list) {
+				System.out.println(str);
+			}
 		} else {
-			list = call.getResult().queryList("//text()");
-		}
-		for(String str: list) {
-			System.out.println(str);
+			Command command = null;
+			if(args.size() != 0) {
+				String c = args.get(0);
+				if(c.equals("branch")) {
+					if(args.size() == 3) {
+						String project = args.get(1);
+						String pac = args.get(2);
+						command = new Branch(api, project, pac);
+					}
+				}
+				if(c.equals("checkout")) {
+					if(args.size() == 3) {
+						String project = args.get(1);
+						String pac = args.get(2);
+						command = new Checkout(api, project, pac);
+					}
+				}
+			}
+			if(command != null) {
+				command.execute();
+			} else {
+				System.out.println("wrong command line");
+			}
+
 		}
 	}
 }

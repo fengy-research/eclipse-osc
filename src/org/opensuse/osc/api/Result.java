@@ -2,9 +2,13 @@ package org.opensuse.osc.api;
 import org.w3c.dom.*;
 import javax.xml.xpath.*;
 import java.util.*;
-import java.io.InputStream;
+import java.io.*;
 
-class Result {
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+
+public class Result {
 	public enum Status {
 		OK,
 		ERROR
@@ -42,6 +46,28 @@ class Result {
 			l.add(nodes.item(i).getNodeValue());
 		}
 		return l;
+	}
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("Type: " + type.toString() + "\n");
+		try {
+			TransformerFactory transfac = TransformerFactory.newInstance();
+			Transformer trans = transfac.newTransformer();
+			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+			//create string from xml tree
+			StringWriter sw = new StringWriter();
+			StreamResult result = new StreamResult(sw);
+			DOMSource source = new DOMSource(document);
+			trans.transform(source, result);
+			sb.append(sw.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		sb.append("end");
+		return sb.toString();
 	}
 }
 
