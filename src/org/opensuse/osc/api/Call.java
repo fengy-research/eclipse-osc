@@ -11,17 +11,19 @@ public class Call {
 	protected Api api;
 	protected String path;
 	protected String method;
-	protected OutputStream body_stream = null;
 
 	protected boolean hasData;
 	public Api getApi() { return api; }
 	public String getMethod() { return method; }
 	public String getPath() { return path; }
-	public OutputStream getBodyStream () { return body_stream;}
 
 	protected Result result = null;
 	public Result getResult() {
 		return result;
+	}
+
+	protected void prepareOutputStream(OutputStream stream) {
+
 	}
 
 	protected HttpURLConnection openConnection() throws IOException {
@@ -39,8 +41,8 @@ public class Call {
 		if(method.toUpperCase().equals("POST")
 		|| method.toUpperCase().equals("PUT")) {
 			connection.setDoOutput(true);
-			body_stream = connection.getOutputStream();
-			body_stream.close();
+			prepareOutputStream(connection.getOutputStream());
+			connection.getOutputStream().close();
 		}
 		return connection;
 	}

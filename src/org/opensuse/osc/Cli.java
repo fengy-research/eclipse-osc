@@ -1,8 +1,12 @@
 package org.opensuse.osc;
 
-import java.util.*;
+import java.io.*;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
 import org.opensuse.osc.api.*;
-import org.opensuse.osc.commands.*;
 
 class Cli {
 	private static class OptionEntry {
@@ -51,12 +55,17 @@ class Cli {
 	public static void main(String[] raw_args) throws Exception {
 		List<String> args = new ArrayList<String>(Arrays.asList (raw_args));
 		OptionEntry [] entries = {
-			new OptionEntry("username", "u"),
-			new OptionEntry("password", "p"),
-			new OptionEntry("host", "h"),
-			new OptionEntry("query", "q"),
-			new OptionEntry("mode", "m")
+			new OptionEntry("username", "U"),
+			new OptionEntry("password", "P"),
+			new OptionEntry("host", "H"),
+			new OptionEntry("query", "Q"),
+			new OptionEntry("mode", "M"),
+			new OptionEntry("project", "j"),
+			new OptionEntry("package", "p"),
+			new OptionEntry("filename", "f")
+			
 		};
+
 		Map<String, String> arg_map = OptionParser.Parse(args, entries);
 		Map<String, String> env = System.getenv();
 		
@@ -78,7 +87,7 @@ class Cli {
 		}
 
 		Api api = new Api(host);
-		api.setAuth(username, password);
+		api.login(username, password);
 
 		if(mode != null && mode.equals("call")) {
 			Call call;
@@ -100,26 +109,38 @@ class Cli {
 				System.out.println(str);
 			}
 		} else {
-			Command command = null;
+			org.opensuse.osc.api.Package pac = null;
+			String project = arg_map.get("project");
+			String pacname = arg_map.get("package");
+			String c = null;
+			pac = api.refPackage(project, pacname);
+			pac.update();
 			if(args.size() != 0) {
-				String c = args.get(0);
+				c = args.get(0);
+			}
+			if(c != null) {
+				if(c.equals("query")) {
+					System.out.println(pac.toString());
+				}
 				if(c.equals("branch")) {
-					if(args.size() == 3) {
-						String project = args.get(1);
-						String pac = args.get(2);
-						command = new Branch(api, project, pac);
-					}
+					pac.branch();
 				}
 				if(c.equals("checkout")) {
-					if(args.size() == 3) {
-						String project = args.get(1);
-						String pac = args.get(2);
-						command = new Checkout(api, project, pac);
+					for(String fn : pac.getFilenames()) {
+						InputStream stream = pac.checkout(fn);
+						System.out.println(stream.toString());
+						FileOutputStream fos = new FileOutputStream(fn);
+						BufferedInputStream bis = new BufferedInputStream(stream);
+						int n;
+						byte [] buffer = new byte[1000];
+						while((n = bis.read(buffer)) != -1) {
+							fos.write(buffer, 0, n);
+						}
+						bis.close();
+						stream.close();
+						fos.close();
 					}
 				}
-			}
-			if(command != null) {
-				command.execute();
 			} else {
 				System.out.println("wrong command line");
 			}

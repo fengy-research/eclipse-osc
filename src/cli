@@ -2,4 +2,4 @@
 export OSC_HOST=https://api.opensuse.org
 export OSC_USER=rainwoodman
 export OSC_PASS=bullshits2
-exec java org.opensuse.osc.api.Cli $*
+exec java org.opensuse.osc.Cli $*
