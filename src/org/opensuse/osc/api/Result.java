@@ -1,12 +1,12 @@
 package org.opensuse.osc.api;
+import org.opensuse.osc.api.utils.XML;
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
+
 import javax.xml.xpath.*;
+
 import java.util.*;
 import java.io.*;
-
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
 
 public class Result {
 	public enum Status {
@@ -23,52 +23,71 @@ public class Result {
 		this.call = call;
 	}
 	protected Call call;
-	protected Document document;
+	private XML xml;
 	protected Status status;
 	protected Type type;
 	protected InputStream stream;
 	public Call getCall() {return call;}
 	public Api getApi() {return call.api;}
-	public Document getDocument() {return document;}
+	public void setStream(InputStream stream) throws OSCException {
+		this.stream = stream;
+		if(type == Type.RESPONSE) 
+			try {
+				xml = new XML(stream);
+			} catch (SAXException e) {
+				throw new OSCException(e);
+			} catch (IOException e) {
+				throw new OSCException(e);
+			}
+		else xml = null;
+	}
 	public Status getStatus() {return status;}
 	public Type getType() {return type;}
 
-	public String query(String path) throws XPathExpressionException {
-		XPathExpression expr = Api.xpath.compile(path);
-		Node r = (Node) expr.evaluate(document, XPathConstants.NODE);
-		if(r != null)
-		return r.getNodeValue();
-		else
-		return null;
-	}
-	public ArrayList<String> queryList(String path) throws XPathExpressionException {
-		XPathExpression expr = Api.xpath.compile(path);
-		NodeList nodes = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
-		ArrayList<String> l = new ArrayList<String>();
-		for(int i = 0; i < nodes.getLength(); i++) {
-			l.add(nodes.item(i).getNodeValue());
+	public String query(String path) throws OSCException {
+
+		try {
+			Node r = (Node) xml.evaluate(path, XPathConstants.NODE);
+			if(r != null)
+			return r.getNodeValue();
+			else return null;
+		} catch (XPathExpressionException e) {
+			throw new OSCException(e);
 		}
-		return l;
+		
 	}
+
+	/**
+	 * 
+	 * Returns an empty list if there is not such xpath
+	 * @param path
+	 * @return
+	 * @throws OSCException
+	 */
+	public ArrayList<String> queryList(String path) throws OSCException {
+
+		try {
+			NodeList nodes;
+			nodes = (NodeList) xml.evaluate(path, XPathConstants.NODESET);
+			if(nodes == null) return new ArrayList<String>();
+			ArrayList<String> l = new ArrayList<String>();
+			for(int i = 0; i < nodes.getLength(); i++) {
+				l.add(nodes.item(i).getNodeValue());
+			}
+			return l;
+		} catch (XPathExpressionException e) {
+			throw new OSCException(e);
+		}
+		
+	}
+	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("--- Result Type: " + type.toString() + "--\n");
-		try {
-			TransformerFactory transfac = TransformerFactory.newInstance();
-			Transformer trans = transfac.newTransformer();
-			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			trans.setOutputProperty(OutputKeys.INDENT, "yes");
-
-			//create string from xml tree
-			StringWriter sw = new StringWriter();
-			StreamResult result = new StreamResult(sw);
-			DOMSource source = new DOMSource(document);
-			trans.transform(source, result);
-			sb.append(sw.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+		if(xml != null)
+		sb.append(xml.toString());
+		else
+		sb.append("BINARY");
 		sb.append("--- Result End -- ");
 		return sb.toString();
 	}

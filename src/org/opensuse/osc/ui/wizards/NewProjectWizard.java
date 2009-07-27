@@ -23,8 +23,11 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.opensuse.osc.Plugin;
+import org.opensuse.osc.core.PackageInfo;
+import org.xml.sax.SAXException;
 
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 
@@ -68,6 +71,7 @@ public class NewProjectWizard extends BasicNewProjectResourceWizard
 					if (page != null)
 						IDE.openEditor(page, file, true);
 				} catch (PartInitException e) {
+					e.printStackTrace();
 					MessageDialog.openError(dw.getShell(),
 						"Error", e.getMessage());
 				}
@@ -137,6 +141,7 @@ public class NewProjectWizard extends BasicNewProjectResourceWizard
 			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {
 			Shell shell= getShell();
+			e.printStackTrace();
 			MessageDialog.openError(shell,
 					e.toString(), e.getMessage());
 
@@ -190,7 +195,15 @@ public class NewProjectWizard extends BasicNewProjectResourceWizard
     IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
     description.setLocation(null);
 
-    newProject = Plugin.getDefault().createProject(description, newProjectHandle, monitor, "OSC");
+    PackageInfo pi = new PackageInfo(newProjectHandle.getFile("package.xml"));
+    pi.refresh();
+	pi.setHost(mainPage.getHost());
+    pi.setPackageName(mainPage.getOSCPackageName());
+    pi.setProjectName(mainPage.getOSCProjectName());
+    pi.setUsername(mainPage.getUsername());
+    pi.setPassword(mainPage.getPassword());
+    
+    newProject = Plugin.getDefault().createProject(description, newProjectHandle, pi, monitor, "OSC");
     System.out.println("Creating a OSC project.");
     return newProject;
     

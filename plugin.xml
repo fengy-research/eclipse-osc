@@ -63,5 +63,26 @@
 			project="true"
 			class="org.opensuse.osc.ui.wizards.NewProjectWizard" />
 	</extension>
-
+	
+	<extension point="org.eclipse.ui.popupMenus">
+		<objectContribution
+			objectClass="org.eclipse.core.resources.IResource"
+			adaptable="true"
+			id="org.opensuse.osc.project.popupMenu">
+			<menu
+				label="OSC"
+				id="org.opensuse.osc.project.popupSubMenu">
+				<groupMarker
+					name="content"/>
+			</menu>
+			<action
+				id="org.opensuse.osc.project.about"
+				label="About"
+				tooltip="About the project"
+				enablesFor="1"
+				menubarPath="org.opensuse.osc.project.popupSubMenu/content"
+				class="org.opensuse.osc.ui.actions.AboutActionDelegate">
+			</action>
+		</objectContribution>
+	</extension>
 </plugin>

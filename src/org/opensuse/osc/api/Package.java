@@ -3,111 +3,116 @@ import java.util.List;
 import java.util.ArrayList;
 
 import java.net.URLEncoder;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.InputStream;
 
-public class Package {
-	protected String project;
-	protected String pac;
-	protected Api api;
-	private List<String> localFiles;
-	private ArrayList<String> visibleLocalFiles;
-	private ArrayList<String> recursiveFiles;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 
+import org.opensuse.osc.api.utils.XML;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+public class Package extends Object{
+	
+	protected String packageName;
+	
 	private Package linkTarget;
-
-	public List<String> getLocalFiles() {
-		return localFiles;
+	private File _link;
+	private ArrayList<LinkAction> linkActionList;
+	private ArrayList<String> fileList;
+	
+	public Package (Api api, Project project, String packageName) {
+		super(api, project, "/source/" + encodeURI(project.getName()) + "/" + encodeURI(packageName));
+		this.packageName = packageName;
 	}
-	public List<String> getFiles() {
-		return recursiveFiles;
+	
+	public Project getProject() {
+		return (Project)owner;
 	}
-
-	public Package (Api api, String project, String pac) {
-		this.api = api;
-		this.project = project;
-		this.pac = pac;
+	public Host getHost() {
+		return getProject().getHost();
 	}
-	public String getProject() { return project; }
-	public String getPackage() { return pac; }
+	public String getProjectName() { return getProject().getName(); }
+	public String getName() { return packageName; }
+	
 	public boolean getIsLink() { return linkTarget != null; }
-
-	protected static String encode(String foo) {
-		try {
-			return URLEncoder.encode(foo, "utf8");
-		} catch(UnsupportedEncodingException e) {
-			return foo;
-		}
+	public Package getLinkTarget() { return linkTarget; }
+	
+	public Package branch() throws OSCException {
+		api.issue("post", uri + "?cmd=branch");
+		Project project = new 
+			Project(api, this.getHost(), "home:" + api.getUsername() + ":branches:" + getProjectName());
+		return new Package(api, project, packageName);
 	}
-	public boolean hasFile(String filename) {
-		return getFiles().indexOf(filename) != -1;
+	
+	public File getFile(String filename) throws OSCException {
+		File f = new File(api, this, filename);
+		f.refresh();
+		return f;
 	}
-	public boolean hasLocalFile(String filename) {
-		return getLocalFiles().indexOf(filename) != -1;
+	
+	public List<String> getFiles() throws OSCException {
+		/** 
+		 * doesn't really throw the exception, as the information
+		 * is obtained in refresh();
+		 */
+		return fileList;
 	}
-
-	public Package branch() throws Exception {
-		Call call = api.newCall("post", "/source/" + encode(project) + "/" + encode(pac) + "?cmd=branch");
-		api.issue(call);
-		return new Package(api, "home:" + api.getUsername() + ":branches:" + project, pac);
+	public List<LinkAction> getLinkActions() {
+		return linkActionList;
 	}
-	public InputStream checkout(String filename) throws Exception {
-		Package p = this;
-		while(p != null && !p.hasLocalFile(filename)) {
-			p = p.linkTarget;
-		}
-		if(p == null) {
-			/* Not found, resort to this project to obtain a fancy error report from osc */
-			p = this;
-		}
-		Call call = api.newCall("get", "/source/" + p.project + "/" + p.pac + "/" + filename);
-		api.issue(call);
-		return call.result.stream;
-	}
-
-	public void fetch() throws Exception {
-		Call call = api.newCall("get", "/source/" + encode(project) + "/" + encode(pac));
-		api.issue(call);
-		Result r = call.getResult();
-		localFiles = r.queryList("//entry/@name");
-		visibleLocalFiles = new ArrayList<String>();
-		recursiveFiles = new ArrayList<String>();
-		for(String s : localFiles) {
-			if(s.startsWith("_")) continue;
-			visibleLocalFiles.add(s);
-			recursiveFiles.add(s);
-		}
-		try {
-			String link_project = r.query("//linkinfo/@project");
-			String link_package = r.query("//linkinfo/@package");
-			if(link_project != null && link_package != null) {
-				linkTarget = api.refPackage(link_project, link_package);
-				linkTarget.fetch();
-			}
-		} catch (Exception e) {
-			linkTarget = null;
-			e.printStackTrace();
-		}
-		if(linkTarget != null) 
-			for(String s : linkTarget.getFiles()) {
-				if(recursiveFiles.indexOf(s) == -1) {
-					recursiveFiles.add(s);
-				}
-			}
+	
+	public void refresh(int rev) throws OSCException {
+		Result r = api.issue("get", uri);
 		
+		fileList = r.queryList("//entry/@name");
+		String link_project = r.query("//linkinfo/@project");
+		String link_package = r.query("//linkinfo/@package");
+		if(link_project != null && link_package != null) {
+			linkTarget = getHost().getProject(link_project).getPackage(link_package);
+			
+		} else {
+			linkTarget = null;
+		}
+		linkActionList = new ArrayList<LinkAction>();
+		if(linkTarget != null) {
+			linkTarget.refresh();
+			_link = getFile("_link");
+			_link.refresh();
+			InputStream ins = _link.checkout(rev);
+			XML xml;
+			try {
+				xml = new XML(ins);			
+				NodeList nodeList = (NodeList) xml.evaluate("//patches/*", XPathConstants.NODESET);
+				for(int i = 0; i < nodeList.getLength(); i++) {
+					Element ele = (Element) nodeList.item(i);
+					linkActionList.add(new LinkAction(ele));
+				}
+			} catch (SAXException e) {
+				throw new OSCException(e);
+			} catch (IOException e) {
+				throw new OSCException(e);
+			} catch (XPathExpressionException e) {
+				throw new OSCException(e);
+			}
+			
+		}
 	}
+	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("Package:" + project + " " + pac +"\n");
+		
+		sb.append(getProject().toString());
+		sb.append(':');
+		sb.append(packageName);
 		if(getIsLink()) {
-			sb.append("Linked: " + linkTarget.project + " " + linkTarget.pac + "\n");
+			sb.append("->");
+			sb.append(linkTarget.toString());
 		}
-		sb.append("Files:\n");
-		for(String s : getFiles()) {
-			sb.append("  ");
-			sb.append(s);
-			sb.append('\n');
-		}
+		
 		return sb.toString();
 	}
 }
