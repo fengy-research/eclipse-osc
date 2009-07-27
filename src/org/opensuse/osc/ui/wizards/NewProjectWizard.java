@@ -1,5 +1,7 @@
 package org.opensuse.osc.ui.wizards;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -24,11 +26,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.opensuse.osc.Plugin;
 import org.opensuse.osc.core.PackageInfo;
-import org.xml.sax.SAXException;
-
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 
 public class NewProjectWizard extends BasicNewProjectResourceWizard
@@ -38,13 +35,15 @@ public class NewProjectWizard extends BasicNewProjectResourceWizard
   private NewProjectPage mainPage;
   private IProject newProject;
   
-  public void addPages() 
+  @Override
+public void addPages() 
   {
     mainPage = new NewProjectPage("New OSC Project");
     addPage(mainPage);
   }
 
-  public void init(IWorkbench workbench, IStructuredSelection selection) 
+  @Override
+public void init(IWorkbench workbench, IStructuredSelection selection) 
   {
     // this.selection = selection;
     super.init(workbench, selection);
@@ -55,6 +54,7 @@ public class NewProjectWizard extends BasicNewProjectResourceWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */		
+	@Override
 	public boolean performFinish() {
 		if (!invokeRunnable(getRunnable())) {
 			return false;
@@ -195,7 +195,7 @@ public class NewProjectWizard extends BasicNewProjectResourceWizard
     IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
     description.setLocation(null);
 
-    PackageInfo pi = new PackageInfo(newProjectHandle.getFile("package.xml"));
+    PackageInfo pi = new PackageInfo(newProjectHandle);
     pi.refresh();
 	pi.setHost(mainPage.getHost());
     pi.setPackageName(mainPage.getOSCPackageName());

@@ -31,6 +31,7 @@ public class Project extends Object {
 		Result r = api.issue("get", uri);
 		return r.queryList("//entry/@name");
 	}
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getHost().toString());

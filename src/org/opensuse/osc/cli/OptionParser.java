@@ -1,6 +1,6 @@
 package org.opensuse.osc.cli;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 class OptionParser {
 	/* Parse the arg, returns the remaining args */

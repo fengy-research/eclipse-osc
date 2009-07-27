@@ -23,7 +23,7 @@ public class LinkAction {
 			type = Type.DELETE;
 		} 
 		if("patch".equals(element.getTagName())) {
-			type = type.PATCH;
+			type = Type.PATCH;
 		} 
 		targetFilename = element.getAttribute("name");
 	}

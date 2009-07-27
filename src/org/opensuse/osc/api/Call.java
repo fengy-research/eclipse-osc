@@ -1,6 +1,8 @@
 package org.opensuse.osc.api;
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class Call {
 	protected Call(Api api, String method, String path) {

@@ -1,12 +1,15 @@
 package org.opensuse.osc.api;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+
 import org.opensuse.osc.api.utils.XML;
-import org.w3c.dom.*;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import javax.xml.xpath.*;
-
-import java.util.*;
-import java.io.*;
 
 public class Result {
 	public enum Status {
@@ -81,6 +84,7 @@ public class Result {
 		
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("--- Result Type: " + type.toString() + "--\n");

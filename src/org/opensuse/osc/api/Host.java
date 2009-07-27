@@ -1,6 +1,5 @@
 package org.opensuse.osc.api;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Host extends Object {
@@ -32,6 +31,7 @@ public class Host extends Object {
 		Result r = api.issue("get", "/source");
 		return r.queryList("//entry/@name");
 	}
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(api.url);

@@ -22,7 +22,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
-
 import org.xml.sax.SAXException;
 
 public class XML {
@@ -65,6 +64,7 @@ public class XML {
 		document = builder.parse(new ByteArrayInputStream(str.getBytes()));
 	}
 
+	@Override
 	public String toString() {
 		
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");

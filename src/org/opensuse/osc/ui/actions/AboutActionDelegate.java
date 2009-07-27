@@ -1,7 +1,5 @@
 package org.opensuse.osc.ui.actions;
 
-import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
@@ -10,7 +8,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.opensuse.osc.Plugin;
-import org.opensuse.osc.core.Project;
+import org.opensuse.osc.core.OSCProject;
+import org.opensuse.osc.core.PackageInfo;
 
 public class AboutActionDelegate implements IObjectActionDelegate {
 	private IWorkbenchPart targetPart;
@@ -28,14 +27,11 @@ public class AboutActionDelegate implements IObjectActionDelegate {
 		// TODO Auto-generated method stub
 		System.out.println("Action run");
 		if(resource instanceof IProject) {
-			Project p;
+			OSCProject p;
 			try {
 				p = Plugin.getModel().getProject((IProject)resource);
-				List<String> l = p.getLinkInfo().getApplies();
-				for(String s : l) {
-					System.out.println(s);
-				}
-				
+				PackageInfo packageInfo = p.getPackageInfo();
+				System.out.println(packageInfo.getApiPackage().toString());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

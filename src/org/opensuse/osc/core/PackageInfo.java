@@ -1,13 +1,27 @@
 package org.opensuse.osc.core;
 
-import org.eclipse.core.resources.IFile;
+
+import org.eclipse.core.resources.IProject;
 
 public class PackageInfo extends XMLFile {
-
-	public PackageInfo(IFile file) {
-		super(file);
+	/**
+	 * NOTE: This constructor takes a IProject handle,
+	 * not the underlying IFile handle for `package.xml'!.
+	 * 
+	 * @param project
+	 */
+	public PackageInfo(IProject project) {
+		super(project.getFile("package.xml"));
 	}
-
+	public org.opensuse.osc.api.Package getApiPackage() throws org.opensuse.osc.api.OSCException {
+		org.opensuse.osc.api.Api api = new org.opensuse.osc.api.Api();
+		api.setURL(getHost());
+		api.login(getUsername(), getPassword());
+		org.opensuse.osc.api.Host host = api.getHost();
+		org.opensuse.osc.api.Project project = host.getProject(getProjectName());
+		return project.getPackage(getPackageName());
+	}
+	
 	public void setProjectName(String value) {
 		set("/osc/package/@project", value);
 	}
@@ -39,6 +53,7 @@ public class PackageInfo extends XMLFile {
 		set("/osc/host/@password", value);
 	}
 	
+	@Override
 	public String getTemplate() {
 		return  
 	

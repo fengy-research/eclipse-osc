@@ -1,11 +1,8 @@
 package org.opensuse.osc.api;
-import java.util.List;
-import java.util.ArrayList;
-
-import java.net.URLEncoder;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -65,6 +62,7 @@ public class Package extends Object{
 		return linkActionList;
 	}
 	
+	@Override
 	public void refresh(int rev) throws OSCException {
 		Result r = api.issue("get", uri);
 		
@@ -102,6 +100,7 @@ public class Package extends Object{
 		}
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		

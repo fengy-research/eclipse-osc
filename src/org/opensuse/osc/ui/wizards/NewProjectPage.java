@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
-import org.opensuse.osc.api.Api;
 
 public class NewProjectPage extends WizardNewProjectCreationPage
 {
@@ -31,7 +30,8 @@ public class NewProjectPage extends WizardNewProjectCreationPage
     setTitle("Create a new OSC project");
   }
   
-  public void createControl(Composite parent) {
+  @Override
+public void createControl(Composite parent) {
 	  super.createControl(parent);
 	  Composite composite = (Composite) getControl();
 	  hostField = createSomeTextGroup(composite, "API Host:", "https://api.opensuse.org", null);

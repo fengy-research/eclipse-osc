@@ -16,10 +16,14 @@ public class File extends Object {
 	public InputStream checkout(int rev) throws OSCException {
 		return api.issue("get", uri).stream;
 	}
+	public InputStream checkout() throws OSCException {
+		return api.issue("get", uri).stream;
+	}
 	public Package getPackage() {
 		return (Package) owner;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		

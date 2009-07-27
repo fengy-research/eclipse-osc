@@ -1,16 +1,11 @@
 package org.opensuse.osc.api;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.*;
-
-import javax.xml.parsers.*;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.xpath.*;
-
-import org.xml.sax.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.Authenticator;
+import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
 
 public class Api {
 	
@@ -49,6 +44,7 @@ public class Api {
 	public void issue(Call call) throws OSCException {
 		if(username != null) {
 			java.net.Authenticator.setDefault(new Authenticator() {
+				@Override
 				public PasswordAuthentication getPasswordAuthentication () {
 					if(password != null)
 						return new PasswordAuthentication (username, password.toCharArray());
