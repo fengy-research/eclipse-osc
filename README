@@ -1,42 +1,97 @@
 Dear all,
 
+	As you may know (or not :-/), 
+	I have been working on the eclipse integration of the openSUSE build 
+	service.
 
-As you may know(or not), I have been working on the eclipse integration of the openSUSE build service.
+	Eclipse is an IDE framework with an open infrastructure. 
+	Through plug-ins such as CDT and JDT, Eclipse delivers full IDEs 
+	for many languages. Traditionally Eclipse has nothing to do with 
+	the Free software(GNU especially) workflow. However an interesting 
+	phenomena is that autotools/RPM packaging support are being added 
+	to Eclipse.
 
-Eclipse is an IDE framework with an open infrastructure. Through plug-ins like CDT/JDT, eclipse delivers full IDE support for many languages. People are also improving the autotools/RPM packaging support. 
+	openSUSE build service(OSC for short in this file) is the Online 
+	package maintainance service of openSUSE. Via this service, individuals
+	can build binary packages of opensource softwares for various linux/BSD
+	platforms.
 
-The openSUSE build service(OSC) aims to ease the life of package maintainers by automating the build service and the patching flow. 
+	In short, Eclipse is a mature development/programming tool and OSC 
+	is a packaging tool. What if putting them together? 
+	
+	Alex asked me this question when I first arrived his office in China, 
+	and during the passed 2 weeks I was able to prove the concept with this
+	prototype. The code is hosted on my github repo: 
+	
+		git://github.com/fengy-research/eclipse-osc.git
+	
+	The directory structure looks as hairy as any other Java projects.
+	META-INF, plugin.xml build.properties are files carrying descriptions of
+	an Eclipse Bundle -- bundle is the other name of plugin.
+	The source code is organized in the Java way under `src'.
 
-Eclipse is a mature development/programming tool and OSC is a packaging tool. 
+	The structure is not `ls' friendly. You don't get source code until some
+	very nested subfolders. Use Eclipse to open the project. Install the
+	GIT plugin and clone the repo with `Import a GIT project'.
 
-What if putting them together? This idea was originally from Alex, and during the passed 2 weeks I was able to finish a proof of concept version for this idea.
-
-The code is hosted on my github repo:
-git://github.com/fengy-research/eclipse-osc.git
-
-The directory structure looks as hairy as any other java projects. Once opened in eclipse, the layout gets clear.
-
-org.opensuse.osc.api contains the Java OSC binding. This layer is similar to the api layer of MonoOSC [1]. The Java binding is far from complete, features are missing. Especially, revision numbers are not supported at all. Adding the missing features should not be difficult.  I wonder if this binding is sufficiently Javaish, as it doesn't come with hundreds interfaces and hidden implementations.
-
-I'll write a README in the package folder to talk about its design.
-
-
-Each osc Package is associated with an eclipse project OSCProject and carries a OSCProjectNature. Various OSC actions are added in the context menu of the resource browser window, for check-in/check-out, expanding, deleting files.
-
-The plugin is written with a reference to BBCDT [2]. Each OSCProject carries a package.xml in which the information to locate the package are stored. 
-
-Unlike the osc commandline interface, special steps are taken to treat the link packages -- (the most significant ones of which are the branched packages). The initial checkout does not expand the package. The package can be expanded by the 'Expand' action in the context menu, when the original package is checked out into the 'origin' folder and the 'link' folder. The 'Patch' action is then used to patch the files in the 'link' folder according to the information supplied in the '_link' file.
-
-An osc Project can be created with the OSC Project Wizard. Files are immediately checked out by the wizard. 
-
-I tried to make the IO async and the time-consuming tasks user friendly. However as my knowledge with Java and async IO doesn't go back beyond this 2 weeks I am sure there are many missed places.
-
-BTW: to start the plugin in a clean workspace, choose 'Run as Eclipse Application' either from the toolbar or the context menu.
+	The package `org.opensuse.osc.api' contains the Java OSC binding.
+	The purpose of this layer is identical to the api layer of MonoOSC [1].
+	This binding is far from complete, features are missing. Revision numbers 
+	are not fatally not supported at all. 
+	Adding the missing features should be easy, once the developer
+	understands the Java accents. I nevertheless wonder if this binding 
+	is sufficiently Javaish, as it doesn't even make use of an Interface.
+	I'll write a README in the package folder to talk about its design.
 
 
-Best,
+	On the side of the Plugin:
+	
+	The plugin is written with a reference from BBCDT [2]. 
+	Each osc Package is associated with three ugly objects:
+		A Plugin project org.opensuse.osc.core.OSCProject,
+		An eclipse resource handle IProject,
+		a OSC Api package org.opensuse.osc.api.Package.
 
-Yu Feng @ Novell China
+	Although not necessary at this stage, the eclipse projects carries an 
+	OSCNature(org.opensuse.osc.core.ProjectNature) that differs them from 
+	other projects.
+	`package.xml' is the special project file with the information to 
+	locate the package on the build service.
+
+	Various OSC actions are added in the context menu of the resource 
+	browser window.
+
+	Unlike the osc commandline interface which hides the details of the link
+	packages, special steps are taken for the link packages.
+	The package is not expanded unless an 'Expand' action is invoked. 
+	The `Expand' action checks out the original package into the `origin' 
+	folder, then copies its content into the 'link' folder
+	(if the folder is already there it doesn't copy). To get the real source
+	code, a `Patch' action should be invoked to patch. The files in the 'link'
+	folder are patched according to the actions supplied in the '_link' file
+	--- Patch is not yet implemented! Java doesn't come with any libraries for
+	diff. (perhaps java-diff?)
+
+	A Wizard is implemented to create an OSCProject. Files are immediately 
+	checked out by the wizard.
+
+	IO should be async to make user-friendly the time-consuming tasks. 
+	However as my knowledge with Java and async IO doesn't go back beyond 
+	this 2 weeks I am sure many places are missed by me.
+
+	Tests are performed with the JUnit4 plugin. The coverage is low: only
+	selected classes in org.opensuse.osc.api are tested by 
+	org.opensuse.osc.api.tests.
+
+
+BTW: 
+	To start the plugin in a clean workspace, choose 
+	`Run as Eclipse Application' either from the toolbar or the context menu.
+
+	Best,
+
+			Yu Feng @ Novell China
 
 [1] http://en.opensuse.org/Build_Service/client_MonoOSC
 [2] http://www.ibm.com/developerworks/library/os-ecl-cdt1/index.html
+[3] http://www.incava.org/projects/java/java-diff/
