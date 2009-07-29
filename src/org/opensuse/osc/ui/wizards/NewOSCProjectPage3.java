@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardContainer;
@@ -82,6 +81,7 @@ public class NewOSCProjectPage3 extends WizardPage {
 
 		projectNameList = createSomeList(composite, "Select from the server",
 				"Fetch", new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent event) {
 						String[] selected = projectNameList.getSelection();
 						if (selected.length > 0) {
@@ -89,6 +89,7 @@ public class NewOSCProjectPage3 extends WizardPage {
 						}
 					}
 				}, new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent event) {
 						fetchProjects();
 					}
@@ -99,6 +100,7 @@ public class NewOSCProjectPage3 extends WizardPage {
 
 		packageNameList = createSomeList(composite, "Select from the server",
 				"Fetch", new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent event) {
 						String[] selected = packageNameList.getSelection();
 						if (selected.length > 0) {
@@ -106,6 +108,7 @@ public class NewOSCProjectPage3 extends WizardPage {
 						}
 					}
 				}, new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent event) {
 						fetchPackages();
 					}
@@ -141,7 +144,7 @@ public class NewOSCProjectPage3 extends WizardPage {
 						host.refresh();
 						monitor.worked(1);
 						List<String> names = host.getProjects();
-						final String[] items = (String[]) names
+						final String[] items = names
 								.toArray(new String[0]);
 					
 						
@@ -192,7 +195,7 @@ public class NewOSCProjectPage3 extends WizardPage {
 						List<String> names = project.getPackages();
 						monitor.worked(1);
 
-						final String[] items = (String[]) names
+						final String[] items = names
 								.toArray(new String[0]);
 				
 						Display.getDefault().syncExec(new Runnable() {

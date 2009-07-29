@@ -19,7 +19,7 @@ public class CheckinActionDelegate extends ActionDelegate {
 				IFile file = (IFile) resource;
 				monitor.beginTask("Checking in " + file.getName() + " ...", 2);
 				
-				OSCProject p = Plugin.getModel().getProject((IProject) resource.getProject());
+				OSCProject p = Plugin.getModel().getProject(resource.getProject());
 				PackageInfo packageInfo = p.getPackageInfo();
 				
 				org.opensuse.osc.api.File apiFile = packageInfo.getApiPackage().getFile(file.getName());
@@ -28,7 +28,7 @@ public class CheckinActionDelegate extends ActionDelegate {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return new Status(Status.ERROR, null, null, e);
+				return new Status(IStatus.ERROR, null, null, e);
 			} finally {
 				monitor.done();
 			}

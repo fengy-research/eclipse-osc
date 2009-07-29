@@ -1,7 +1,5 @@
 package org.opensuse.osc.ui.actions;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -11,9 +9,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.action.IAction;
-
-
 import org.opensuse.osc.Plugin;
 import org.opensuse.osc.api.File;
 import org.opensuse.osc.api.Package;
@@ -46,7 +41,7 @@ public class ExpandActionDelegate extends ActionDelegate {
 				
 				/* Only for a 'link' package */
 				if(!apiPackage.getIsLink()) {
-					return new Status(Status.ERROR, "Not a link package.", null);
+					return new Status(IStatus.ERROR, "Not a link package.", null);
 				}
 				
 				monitor.subTask("Creating the folder");
@@ -105,7 +100,7 @@ public class ExpandActionDelegate extends ActionDelegate {
 				} else 
 					mon.done();
 			} catch (Exception e) {
-				return new Status(Status.ERROR, Plugin.PLUGIN_ID, e.getMessage(), e);
+				return new Status(IStatus.ERROR, Plugin.PLUGIN_ID, e.getMessage(), e);
 			} finally {
 				monitor.done();
 				

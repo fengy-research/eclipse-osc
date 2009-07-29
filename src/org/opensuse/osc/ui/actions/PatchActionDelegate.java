@@ -6,13 +6,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.IAction;
-
-
-import org.opensuse.osc.Plugin;
 import org.opensuse.osc.api.utils.Patch;
-import org.opensuse.osc.core.OSCProject;
-import org.opensuse.osc.core.PackageInfo;
 
 public class PatchActionDelegate extends ActionDelegate {
 	@Override
