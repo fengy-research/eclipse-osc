@@ -10,7 +10,7 @@ import org.opensuse.osc.api.OSCException;
 
 public class ApiTest {
 	static Api api;
-	
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		api = new Api();
@@ -19,7 +19,7 @@ public class ApiTest {
 
 	@Test
 	public void testLogin() {
-	
+
 		try {
 			api.login("rainwoodman", "bullshits2");
 		} catch (OSCException e) {
@@ -28,6 +28,5 @@ public class ApiTest {
 		}
 		assertNotNull(api.getHost().getTitle());
 	}
-
 
 }

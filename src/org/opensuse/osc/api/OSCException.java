@@ -1,4 +1,3 @@
-
 package org.opensuse.osc.api;
 
 public class OSCException extends Exception {
@@ -10,8 +9,9 @@ public class OSCException extends Exception {
 	public OSCException(Exception cause) {
 		super(cause);
 	}
+
 	public OSCException(String message) {
 		super(message);
 	}
-	
+
 }

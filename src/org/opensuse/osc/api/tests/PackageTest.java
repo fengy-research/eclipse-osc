@@ -16,7 +16,7 @@ public class PackageTest {
 	static Host host;
 	static Project project;
 	static Package p;
-	
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		api = new Api();
@@ -29,12 +29,12 @@ public class PackageTest {
 
 	@Test
 	public void testGetIsLink() {
-		assert(p.getIsLink() == true);
+		assert (p.getIsLink() == true);
 	}
 
 	@Test
 	public void testGetLinkTarget() {
-		assert(p.getLinkTarget() != null);
+		assert (p.getLinkTarget() != null);
 	}
 
 	@Test
@@ -55,8 +55,8 @@ public class PackageTest {
 		} catch (OSCException e) {
 			System.out.println(e.getMessage());
 			caught = true;
-		}	
-		if(!caught) {
+		}
+		if (!caught) {
 			fail("should get an error");
 		}
 	}
@@ -64,7 +64,7 @@ public class PackageTest {
 	@Test
 	public void testGetFiles() {
 		try {
-			assert(p.getFiles().size() >= 2);
+			assert (p.getFiles().size() >= 2);
 		} catch (OSCException e) {
 			fail(e.getMessage());
 		}
@@ -72,7 +72,7 @@ public class PackageTest {
 
 	@Test
 	public void testGetLinkActions() {
-		assert(p.getLinkActions().size() >= 2 );
+		assert (p.getLinkActions().size() >= 2);
 	}
 
 }

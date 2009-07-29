@@ -25,13 +25,13 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class XML {
-	
+
 	static DocumentBuilderFactory dbFactory;
 	static XPathFactory pathFactory;
 	static DocumentBuilder builder;
 	static TransformerFactory transFactory;
-	static Transformer transformer; 
-	
+	static Transformer transformer;
+
 	public Document document;
 	static {
 		dbFactory = DocumentBuilderFactory.newInstance();
@@ -51,26 +51,26 @@ public class XML {
 			e.printStackTrace();
 		}
 	}
-	
-	public XML (InputStream is) throws SAXException, IOException{
-		document = builder.parse(is);	
+
+	public XML(InputStream is) throws SAXException, IOException {
+		document = builder.parse(is);
 	}
-	
-	public XML (Document node) {
+
+	public XML(Document node) {
 		document = node;
 	}
-	
+
 	public XML(String str) throws SAXException, IOException {
 		document = builder.parse(new ByteArrayInputStream(str.getBytes()));
 	}
 
 	@Override
 	public String toString() {
-		
+
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
-		//create string from xml tree
+		// create string from xml tree
 		StringWriter sw = new StringWriter();
 		StreamResult result = new StreamResult(sw);
 		DOMSource source = new DOMSource(document);
@@ -82,18 +82,19 @@ public class XML {
 		}
 		return sw.toString();
 	}
-	
+
 	public void write(OutputStream os) throws TransformerException {
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
-		//create string from xml tree
+		// create string from xml tree
 		StreamResult result = new StreamResult(os);
 		DOMSource source = new DOMSource(document);
 		transformer.transform(source, result);
 	}
-	
-	public Object evaluate(String path, QName returnType) throws XPathExpressionException {
+
+	public Object evaluate(String path, QName returnType)
+			throws XPathExpressionException {
 		XPath xpath = pathFactory.newXPath();
 		return xpath.evaluate(path, document, returnType);
 	}

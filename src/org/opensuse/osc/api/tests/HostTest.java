@@ -14,6 +14,7 @@ import org.opensuse.osc.api.Project;
 public class HostTest {
 	static Api api;
 	static Host host;
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		api = new Api();
@@ -22,13 +23,11 @@ public class HostTest {
 		host = api.getHost();
 	}
 
-
 	@Test
-	/**
-	 * Test GetProject
-	 * Here we assume the user rainwoodman have access to 
-	 * home:rainwoodman,
-	 * and the project home:rainwoodman-is-not-there doesn't exist.
+	/*
+	 * * Test GetProject Here we assume the user rainwoodman have access to
+	 * home:rainwoodman, and the project home:rainwoodman-is-not-there doesn't
+	 * exist.
 	 */
 	public void testGetProject() {
 
@@ -44,27 +43,26 @@ public class HostTest {
 			System.out.println(e.toString());
 			caught = true;
 		}
-		if(!caught) {
+		if (!caught) {
 			fail("Should fail on non-existing projects");
 		}
 	}
 
 	@Test
-	/**
-	 * Test getProjects 
-	 * we assume api.opensuse.org always hosts more than 10 projects
-	 * (as the time this is written, it is hosting 7199 projects
-	 * */
+	/*
+	 * * Test getProjects we assume api.opensuse.org always hosts more than 10
+	 * projects (as the time this is written, it is hosting 7199 projects
+	 */
 	public void testGetProjects() {
 		try {
 			List<String> projectNames = host.getProjects();
-		
+
 			System.out.println(String.valueOf(projectNames.size()));
-			assert(projectNames.size() >= 10);
+			assert (projectNames.size() >= 10);
 		} catch (OSCException e) {
 			fail(e.getMessage());
 		}
-		
+
 	}
 
 }

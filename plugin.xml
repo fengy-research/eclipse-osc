@@ -61,9 +61,11 @@
 			category="org.opensuse.osc.ui.newProjectWizards"
 			id="org.opensuse.osc.ui.wizards.NewProjectWizard"
 			project="true"
-			class="org.opensuse.osc.ui.wizards.NewProjectWizard" />
+			class="org.opensuse.osc.ui.wizards.NewOSCProjectWizard" />
 	</extension>
-	
+<!-- =================================================================================== -->
+<!-- OSC Actions                                                                      -->
+<!-- =================================================================================== -->	
 	<extension point="org.eclipse.ui.popupMenus">
 		<objectContribution
 			objectClass="org.eclipse.core.resources.IResource"
@@ -82,6 +84,46 @@
 				enablesFor="1"
 				menubarPath="org.opensuse.osc.project.popupSubMenu/content"
 				class="org.opensuse.osc.ui.actions.AboutActionDelegate">
+			</action>
+			<action
+				id="org.opensuse.osc.project.expand"
+				label="Expand"
+				tooltip="Expand a link package"
+				enablesFor="1"
+				menubarPath="org.opensuse.osc.project.popupSubMenu/content"
+				class="org.opensuse.osc.ui.actions.ExpandActionDelegate">
+			</action>
+			<action
+				id="org.opensuse.osc.project.checkout"
+				label="Check-out"
+				tooltip="Check-out a file/package"
+				enablesFor="1"
+				menubarPath="org.opensuse.osc.project.popupSubMenu/content"
+				class="org.opensuse.osc.ui.actions.CheckoutActionDelegate">
+			</action>
+			<action
+				id="org.opensuse.osc.project.checkin"
+				label="Check-in"
+				tooltip="Check-in a file"
+				enablesFor="1"
+				menubarPath="org.opensuse.osc.project.popupSubMenu/content"
+				class="org.opensuse.osc.ui.actions.CheckinActionDelegate">
+			</action>
+			<action
+				id="org.opensuse.osc.project.delete"
+				label="Delete"
+				tooltip="Delete a file"
+				enablesFor="1"
+				menubarPath="org.opensuse.osc.project.popupSubMenu/content"
+				class="org.opensuse.osc.ui.actions.DeleteActionDelegate">
+			</action>
+			<action
+				id="org.opensuse.osc.project.rebuild"
+				label="Rebuild"
+				tooltip="Trigger a rebuild"
+				enablesFor="1"
+				menubarPath="org.opensuse.osc.project.popupSubMenu/content"
+				class="org.opensuse.osc.ui.actions.RebuildActionDelegate">
 			</action>
 		</objectContribution>
 	</extension>
