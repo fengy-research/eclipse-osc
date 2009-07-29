@@ -1,0 +1,42 @@
+Dear all,
+
+
+As you may know(or not), I have been working on the eclipse integration of the openSUSE build service.
+
+Eclipse is an IDE framework with an open infrastructure. Through plug-ins like CDT/JDT, eclipse delivers full IDE support for many languages. People are also improving the autotools/RPM packaging support. 
+
+The openSUSE build service(OSC) aims to ease the life of package maintainers by automating the build service and the patching flow. 
+
+Eclipse is a mature development/programming tool and OSC is a packaging tool. 
+
+What if putting them together? This idea was originally from Alex, and during the passed 2 weeks I was able to finish a proof of concept version for this idea.
+
+The code is hosted on my github repo:
+git://github.com/fengy-research/eclipse-osc.git
+
+The directory structure looks as hairy as any other java projects. Once opened in eclipse, the layout gets clear.
+
+org.opensuse.osc.api contains the Java OSC binding. This layer is similar to the api layer of MonoOSC [1]. The Java binding is far from complete, features are missing. Especially, revision numbers are not supported at all. Adding the missing features should not be difficult.  I wonder if this binding is sufficiently Javaish, as it doesn't come with hundreds interfaces and hidden implementations.
+
+I'll write a README in the package folder to talk about its design.
+
+
+Each osc Package is associated with an eclipse project OSCProject and carries a OSCProjectNature. Various OSC actions are added in the context menu of the resource browser window, for check-in/check-out, expanding, deleting files.
+
+The plugin is written with a reference to BBCDT [2]. Each OSCProject carries a package.xml in which the information to locate the package are stored. 
+
+Unlike the osc commandline interface, special steps are taken to treat the link packages -- (the most significant ones of which are the branched packages). The initial checkout does not expand the package. The package can be expanded by the 'Expand' action in the context menu, when the original package is checked out into the 'origin' folder and the 'link' folder. The 'Patch' action is then used to patch the files in the 'link' folder according to the information supplied in the '_link' file.
+
+An osc Project can be created with the OSC Project Wizard. Files are immediately checked out by the wizard. 
+
+I tried to make the IO async and the time-consuming tasks user friendly. However as my knowledge with Java and async IO doesn't go back beyond this 2 weeks I am sure there are many missed places.
+
+BTW: to start the plugin in a clean workspace, choose 'Run as Eclipse Application' either from the toolbar or the context menu.
+
+
+Best,
+
+Yu Feng @ Novell China
+
+[1] http://en.opensuse.org/Build_Service/client_MonoOSC
+[2] http://www.ibm.com/developerworks/library/os-ecl-cdt1/index.html
