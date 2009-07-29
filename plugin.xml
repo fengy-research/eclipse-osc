@@ -94,6 +94,14 @@
 				class="org.opensuse.osc.ui.actions.ExpandActionDelegate">
 			</action>
 			<action
+				id="org.opensuse.osc.project.patch"
+				label="Patch"
+				tooltip="Apply Patches for an expanded pakcage"
+				enablesFor="1"
+				menubarPath="org.opensuse.osc.project.popupSubMenu/content"
+				class="org.opensuse.osc.ui.actions.PatchActionDelegate">
+			</action>
+			<action
 				id="org.opensuse.osc.project.checkout"
 				label="Check-out"
 				tooltip="Check-out a file/package"

@@ -1,5 +1,7 @@
 package org.opensuse.osc.ui.actions;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -15,6 +17,7 @@ import org.eclipse.jface.action.IAction;
 import org.opensuse.osc.Plugin;
 import org.opensuse.osc.api.File;
 import org.opensuse.osc.api.Package;
+import org.opensuse.osc.api.utils.Patch;
 import org.opensuse.osc.core.OSCProject;
 import org.opensuse.osc.core.PackageInfo;
 
@@ -25,7 +28,7 @@ public class ExpandActionDelegate extends ActionDelegate {
 			IProject projectHandle = (IProject) resource;
 			SubProgressMonitor mon;
 			try {
-				monitor.beginTask("Expanding a project", 4);
+				monitor.beginTask("Expanding a project", 5);
 				
 				monitor.subTask("Getting the package information");
 				OSCProject p = Plugin.getModel().getProject(projectHandle);
@@ -48,9 +51,13 @@ public class ExpandActionDelegate extends ActionDelegate {
 				
 				monitor.subTask("Creating the folder");
 				/* Create the folder for the expanded files */
-				IFolder folderHandle = projectHandle.getFolder("link");
+				IFolder folderHandle = projectHandle.getFolder("origin");
 				mon = new SubProgressMonitor(monitor, 1);
-				folderHandle.create(true, true, mon);
+				if(!folderHandle.exists()) {
+					folderHandle.create(true, true, mon);
+				} else {
+					mon.done();
+				}
 				
 				if(monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
@@ -75,16 +82,30 @@ public class ExpandActionDelegate extends ActionDelegate {
 					IFile fileHandle = folderHandle.getFile(filename);
 					File apiFile = linkApiPackage.getFile(filename);
 					SubProgressMonitor mon1 = new SubProgressMonitor(mon, 1);
-					fileHandle.create(apiFile.checkout(), true, mon1);
+					if(!fileHandle.exists()) {
+						fileHandle.create(apiFile.checkout(), true, mon1);
+					} else {
+						fileHandle.setContents(apiFile.checkout(), true, false, mon1);
+					}
 
 					if(monitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
 					}
 				}
-				mon.done();
-				
+				monitor.subTask("Copying files");
+				mon = new SubProgressMonitor(monitor, 1);
+				IFolder linkFolderHandle = projectHandle.getFolder("link");
+				if(!linkFolderHandle.exists()) {
+					folderHandle.copy(linkFolderHandle.getProjectRelativePath(), true, mon);
+					monitor.subTask("Patching files");
+					Patch patch = new Patch(linkFolderHandle.getFullPath().toOSString(), 
+							projectHandle.getFile("patch.diff").getContents());
+					patch.apply();
+					
+				} else 
+					mon.done();
 			} catch (Exception e) {
-				return new Status(Status.ERROR, null, null, e);
+				return new Status(Status.ERROR, Plugin.PLUGIN_ID, e.getMessage(), e);
 			} finally {
 				monitor.done();
 				
