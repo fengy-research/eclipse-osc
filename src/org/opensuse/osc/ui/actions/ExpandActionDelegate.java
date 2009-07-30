@@ -12,9 +12,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.opensuse.osc.Plugin;
 import org.opensuse.osc.api.File;
 import org.opensuse.osc.api.Package;
-import org.opensuse.osc.api.utils.Patch;
 import org.opensuse.osc.core.OSCProject;
 import org.opensuse.osc.core.PackageInfo;
+import org.opensuse.osc.core.Patch;
 
 public class ExpandActionDelegate extends ActionDelegate {
 	@Override
@@ -87,18 +87,7 @@ public class ExpandActionDelegate extends ActionDelegate {
 						return Status.CANCEL_STATUS;
 					}
 				}
-				monitor.subTask("Copying files");
-				mon = new SubProgressMonitor(monitor, 1);
-				IFolder linkFolderHandle = projectHandle.getFolder("link");
-				if(!linkFolderHandle.exists()) {
-					folderHandle.copy(linkFolderHandle.getProjectRelativePath(), true, mon);
-					monitor.subTask("Patching files");
-					Patch patch = new Patch(linkFolderHandle.getFullPath().toOSString(), 
-							projectHandle.getFile("patch.diff").getContents());
-					patch.apply();
-					
-				} else 
-					mon.done();
+
 			} catch (Exception e) {
 				return new Status(IStatus.ERROR, Plugin.PLUGIN_ID, e.getMessage(), e);
 			} finally {

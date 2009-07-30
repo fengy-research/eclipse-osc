@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
 public class Model extends Element {
 	private HashMap<IProject, OSCProject> projectHash = new HashMap<IProject, OSCProject>();
@@ -17,7 +18,7 @@ public class Model extends Element {
 		super(root);
 	}
 
-	public OSCProject getProject(IProject res) throws Exception {
+	public OSCProject getProject(IProject res) throws CoreException {
 		OSCProject p = projectHash.get(res);
 		if (p == null) {
 			p = new OSCProject(res);

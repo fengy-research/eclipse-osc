@@ -31,13 +31,15 @@ public class ProjectTest {
 	public void testGetPackage() {
 		try {
 			Package gnomeDO = project.getPackage("gnome-do");
+			gnomeDO.refresh();
 			assert (gnomeDO.getIsLink());
 		} catch (OSCException e) {
 			fail(e.getMessage());
 		}
 		boolean caught = false;
 		try {
-			project.getPackage("gnome-do-is-not-there");
+			project.getPackage("gnome-do-is-not-there").refresh();
+			
 		} catch (OSCException e) {
 			System.out.println(e.getMessage());
 			caught = true;

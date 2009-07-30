@@ -3,7 +3,7 @@ package org.opensuse.osc.api;
 import org.w3c.dom.Element;
 
 public class LinkAction {
-	public enum Type {
+	public static enum Type {
 		ADD, DELETE, PATCH
 	}
 
@@ -23,13 +23,19 @@ public class LinkAction {
 		if ("delete".equals(element.getTagName())) {
 			type = Type.DELETE;
 		}
-		if ("patch".equals(element.getTagName())) {
+		if ("apply".equals(element.getTagName())) {
 			type = Type.PATCH;
 		}
 		targetFilename = element.getAttribute("name");
 	}
 
-	public void apply() {
-		throw new UnsupportedOperationException("not implemneted");
+	public Type getType() {
+		return type;
+	}
+	public String getTargetFilename() {
+		return targetFilename;
+	}
+	public Package getOwner() {
+		return owner;
 	}
 }

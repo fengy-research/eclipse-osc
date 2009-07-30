@@ -22,6 +22,7 @@ public class ApiTest {
 
 		try {
 			api.login("rainwoodman", "bullshits2");
+			api.getHost().refresh();
 		} catch (OSCException e) {
 			// TODO Auto-generated catch block
 			fail(e.getMessage());

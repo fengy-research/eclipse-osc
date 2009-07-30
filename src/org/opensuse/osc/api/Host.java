@@ -38,7 +38,6 @@ public class Host extends Object {
 
 	public Project getProject(String projectName) throws OSCException {
 		Project p = new Project(api, this, projectName);
-		p.refresh();
 		return p;
 	}
 

@@ -33,12 +33,14 @@ public class HostTest {
 
 		try {
 			Project project = host.getProject("home:rainwoodman");
+			project.refresh();
 		} catch (OSCException e) {
 			fail(e.getMessage());
 		}
 		boolean caught = false;
 		try {
 			Project project = host.getProject("home:rainwoodman-is-not-there");
+			project.refresh();
 		} catch (OSCException e) {
 			System.out.println(e.toString());
 			caught = true;
@@ -55,8 +57,9 @@ public class HostTest {
 	 */
 	public void testGetProjects() {
 		try {
+			host.refresh();
 			List<String> projectNames = host.getProjects();
-
+			
 			System.out.println(String.valueOf(projectNames.size()));
 			assert (projectNames.size() >= 10);
 		} catch (OSCException e) {

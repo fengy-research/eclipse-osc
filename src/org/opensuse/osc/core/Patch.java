@@ -1,4 +1,4 @@
-package org.opensuse.osc.api.utils;
+package org.opensuse.osc.core;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class Patch {
 		String[] cmdline = {
 				"patch",
 				"-p0",
-				"-d " + chroot
+				"-d" + chroot
 		};
 		
 		try {
@@ -62,8 +62,8 @@ public class Patch {
 			while((n = patchContent.read(buffer)) > 0) {
 				stdin.write(buffer, 0, n);
 			}
-			process.waitFor();
 			stdin.close();
+			process.waitFor();
 			stderr.close();
 			stdout.close();
 		} catch (IOException e) {

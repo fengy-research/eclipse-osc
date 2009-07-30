@@ -25,16 +25,21 @@ public class PackageTest {
 		host = api.getHost();
 		project = host.getProject("home:rainwoodman:branches:openSUSE:11.1");
 		p = project.getPackage("gnome-do");
+		p.refresh();
 	}
 
 	@Test
 	public void testGetIsLink() {
-		assert (p.getIsLink() == true);
+		if(p.getIsLink() != true) {
+			fail("should be a link");
+		}
 	}
 
 	@Test
 	public void testGetLinkTarget() {
-		assert (p.getLinkTarget() != null);
+		if(p.getLinkTarget() == null) {
+			fail("should be a link");
+		}
 	}
 
 	@Test
@@ -64,7 +69,9 @@ public class PackageTest {
 	@Test
 	public void testGetFiles() {
 		try {
-			assert (p.getFiles().size() >= 2);
+			if (p.getFiles().size() < 2) {
+				fail("should have more than 2 files");
+			}
 		} catch (OSCException e) {
 			fail(e.getMessage());
 		}
@@ -72,7 +79,9 @@ public class PackageTest {
 
 	@Test
 	public void testGetLinkActions() {
-		assert (p.getLinkActions().size() >= 2);
+		if(p.getLinkActions().size() < 2) {
+			fail("should hav emore than 2 actions");
+		}
 	}
 
 }
