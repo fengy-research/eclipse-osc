@@ -12,7 +12,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public abstract class ActionDelegate implements IObjectActionDelegate {
 	protected IResource resource;
-	
+
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// TODO Auto-generated method stub
@@ -26,11 +26,12 @@ public abstract class ActionDelegate implements IObjectActionDelegate {
 			protected IStatus run(IProgressMonitor monitor) {
 				return ActionDelegate.this.run(monitor);
 			}
-			
+
 		};
 		job.schedule();
-		
+
 	}
+
 	public abstract IStatus run(IProgressMonitor monitor);
 
 	@Override

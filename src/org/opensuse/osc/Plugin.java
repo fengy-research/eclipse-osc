@@ -102,6 +102,7 @@ public class Plugin extends AbstractUIPlugin {
 					ProjectNature.addNature(projectHandle,
 							new SubProgressMonitor(monitor, 1));
 					/* associate the projectHandle with OSCProject */
+					@SuppressWarnings("unused")
 					OSCProject p = getModel().getProject(projectHandle);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

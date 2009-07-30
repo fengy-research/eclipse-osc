@@ -51,12 +51,12 @@ public class Package extends Object {
 	public Package getLinkTarget() {
 		return linkTarget;
 	}
+
 	public void rebuild() throws OSCException {
-		api.issue("post", "build/" + encodeURI(getProjectName()) 
-				+ "?cmd=rebuild" 
-				+ "&package=" + encodeURI(getName()));
+		api.issue("post", "build/" + encodeURI(getProjectName())
+				+ "?cmd=rebuild" + "&package=" + encodeURI(getName()));
 	}
-	
+
 	public Package branch() throws OSCException {
 		api.issue("post", uri + "?cmd=branch");
 		Project project = new Project(api, this.getHost(), "home:"
@@ -83,7 +83,8 @@ public class Package extends Object {
 
 	@Override
 	public void refresh(int rev) throws OSCException {
-		if(!outDated) return;
+		if (!outDated)
+			return;
 		outDated = false;
 		Result r = api.issue("get", uri);
 

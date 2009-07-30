@@ -27,9 +27,11 @@ public class File extends Object {
 	public void delete() throws OSCException {
 		api.issue("delete", uri);
 	}
+
 	public void checkin(InputStream stream) throws OSCException {
 		api.issue("put", uri, stream);
 	}
+
 	public Package getPackage() {
 		return (Package) owner;
 	}

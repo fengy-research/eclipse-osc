@@ -9,45 +9,38 @@ import java.io.OutputStream;
 public class Patch {
 	protected String chroot;
 	protected InputStream patchContent;
-	class StreamGobbler extends Thread
-	{
-	    InputStream is;
-	    String type;
-	    
-	    StreamGobbler(InputStream is, String type)
-	    {
-	        this.is = is;
-	        this.type = type;
-	    }
-	    
-	    @Override
-		public void run()
-	    {
-	        try
-	        {
-	            InputStreamReader isr = new InputStreamReader(is);
-	            BufferedReader br = new BufferedReader(isr);
-	            String line=null;
-	            while ( (line = br.readLine()) != null)
-	                System.out.println(type + ">" + line);    
-	            } catch (IOException ioe)
-	              {
-	                ioe.printStackTrace();  
-	              }
-	    }
+
+	class StreamGobbler extends Thread {
+		InputStream is;
+		String type;
+
+		StreamGobbler(InputStream is, String type) {
+			this.is = is;
+			this.type = type;
+		}
+
+		@Override
+		public void run() {
+			try {
+				InputStreamReader isr = new InputStreamReader(is);
+				BufferedReader br = new BufferedReader(isr);
+				String line = null;
+				while ((line = br.readLine()) != null)
+					System.out.println(type + ">" + line);
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+		}
 	}
 
 	public Patch(String chroot, InputStream patchContent) {
 		this.patchContent = patchContent;
 		this.chroot = chroot;
 	}
+
 	public void apply() {
-		String[] cmdline = {
-				"patch",
-				"-p0",
-				"-d" + chroot
-		};
-		
+		String[] cmdline = { "patch", "-p0", "-d" + chroot };
+
 		try {
 			Process process = Runtime.getRuntime().exec(cmdline);
 			InputStream stderr = process.getErrorStream();
@@ -59,7 +52,7 @@ public class Patch {
 			stdoutGobbler.start();
 			byte[] buffer = new byte[65535];
 			int n;
-			while((n = patchContent.read(buffer)) > 0) {
+			while ((n = patchContent.read(buffer)) > 0) {
 				stdin.write(buffer, 0, n);
 			}
 			stdin.close();
@@ -73,10 +66,8 @@ public class Patch {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			
-			
+
 		}
-		
-		
+
 	}
 }

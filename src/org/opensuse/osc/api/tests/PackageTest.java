@@ -30,14 +30,14 @@ public class PackageTest {
 
 	@Test
 	public void testGetIsLink() {
-		if(p.getIsLink() != true) {
+		if (p.getIsLink() != true) {
 			fail("should be a link");
 		}
 	}
 
 	@Test
 	public void testGetLinkTarget() {
-		if(p.getLinkTarget() == null) {
+		if (p.getLinkTarget() == null) {
 			fail("should be a link");
 		}
 	}
@@ -79,7 +79,7 @@ public class PackageTest {
 
 	@Test
 	public void testGetLinkActions() {
-		if(p.getLinkActions().size() < 2) {
+		if (p.getLinkActions().size() < 2) {
 			fail("should hav emore than 2 actions");
 		}
 	}

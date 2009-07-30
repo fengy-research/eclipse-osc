@@ -144,10 +144,8 @@ public class NewOSCProjectPage3 extends WizardPage {
 						host.refresh();
 						monitor.worked(1);
 						List<String> names = host.getProjects();
-						final String[] items = names
-								.toArray(new String[0]);
-					
-						
+						final String[] items = names.toArray(new String[0]);
+
 						Display.getDefault().syncExec(new Runnable() {
 							public void run() {
 								projectNameList.setItems(items);
@@ -187,17 +185,16 @@ public class NewOSCProjectPage3 extends WizardPage {
 						api.setURL(hostURL);
 						api.login(username, password);
 						Host host = api.getHost();
-						
+
 						org.opensuse.osc.api.Project project = host
 								.getProject(projectName);
 						project.refresh();
-		
+
 						List<String> names = project.getPackages();
 						monitor.worked(1);
 
-						final String[] items = names
-								.toArray(new String[0]);
-				
+						final String[] items = names.toArray(new String[0]);
+
 						Display.getDefault().syncExec(new Runnable() {
 							public void run() {
 								packageNameList.setItems(items);

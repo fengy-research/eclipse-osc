@@ -59,7 +59,7 @@ public class HostTest {
 		try {
 			host.refresh();
 			List<String> projectNames = host.getProjects();
-			
+
 			System.out.println(String.valueOf(projectNames.size()));
 			assert (projectNames.size() >= 10);
 		} catch (OSCException e) {

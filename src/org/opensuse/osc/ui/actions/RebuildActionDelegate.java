@@ -13,7 +13,8 @@ public class RebuildActionDelegate extends ActionDelegate {
 	public IStatus run(IProgressMonitor monitor) {
 		if (resource instanceof IProject) {
 			try {
-				OSCProject p = Plugin.getModel().getProject((IProject) resource);
+				OSCProject p = Plugin.getModel()
+						.getProject((IProject) resource);
 				PackageInfo packageInfo = p.getPackageInfo();
 				packageInfo.getApiPackage().rebuild();
 			} catch (Exception e) {
@@ -22,6 +23,5 @@ public class RebuildActionDelegate extends ActionDelegate {
 		}
 		return Status.OK_STATUS;
 	}
-
 
 }

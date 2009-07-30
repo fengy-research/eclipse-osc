@@ -1,6 +1,6 @@
 package org.opensuse.osc.api.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 
@@ -21,7 +21,7 @@ public class FileTest {
 	static Package p;
 	static File f;
 	private InputStream is;
-	
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		api = new Api();
@@ -32,7 +32,6 @@ public class FileTest {
 		p = project.getPackage("evince");
 		f = p.getFile("_meta");
 	}
-
 
 	@Test
 	public void testCheckoutInt() {

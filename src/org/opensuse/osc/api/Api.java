@@ -8,7 +8,6 @@ import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 
-
 public class Api {
 
 	public Api(String url) {
@@ -46,7 +45,8 @@ public class Api {
 		this.password = password;
 	}
 
-	public void issue(Call call, Result.Type type, InputStream stream) throws OSCException {
+	public void issue(Call call, Result.Type type, InputStream stream)
+			throws OSCException {
 		if (username != null) {
 			java.net.Authenticator.setDefault(new Authenticator() {
 				@Override
@@ -78,7 +78,7 @@ public class Api {
 			System.out.println(content_type);
 
 			call.result.type = type;
-			
+
 			call.result.setStream(connection.getInputStream());
 			call.result.status = Result.Status.OK;
 			System.out.println(call.getResult().toString());
@@ -105,20 +105,22 @@ public class Api {
 		}
 
 	}
-	
 
-	
-	public Result issue(String method, String path, Result.Type type) throws OSCException {
+	public Result issue(String method, String path, Result.Type type)
+			throws OSCException {
 		Call call = new Call(this, method, path);
 		issue(call, type, null);
 		return call.getResult();
 	}
+
 	public Result issue(String method, String path) throws OSCException {
 		Call call = new Call(this, method, path);
 		issue(call, Result.Type.RESPONSE, null);
 		return call.getResult();
 	}
-	public Result issue(String method, String path, InputStream stream) throws OSCException {
+
+	public Result issue(String method, String path, InputStream stream)
+			throws OSCException {
 		Call call = new Call(this, method, path);
 		issue(call, Result.Type.RESPONSE, stream);
 		return call.getResult();

@@ -8,7 +8,7 @@ public abstract class Object {
 	protected String uri;
 	protected Object owner;
 	protected boolean outDated = true;
-	
+
 	protected Object(Api api, Object owner, String uri) {
 		this.owner = owner;
 		this.api = api;

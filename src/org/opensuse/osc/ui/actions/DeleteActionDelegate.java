@@ -1,7 +1,6 @@
 package org.opensuse.osc.ui.actions;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -14,10 +13,12 @@ public class DeleteActionDelegate extends ActionDelegate {
 	public IStatus run(IProgressMonitor monitor) {
 		if (resource instanceof IFile) {
 			try {
-				OSCProject p = Plugin.getModel().getProject(resource.getProject());
+				OSCProject p = Plugin.getModel().getProject(
+						resource.getProject());
 				PackageInfo packageInfo = p.getPackageInfo();
-				IFile file = (IFile)resource;
-				org.opensuse.osc.api.File apiFile = packageInfo.getApiPackage().getFile(file.getName());
+				IFile file = (IFile) resource;
+				org.opensuse.osc.api.File apiFile = packageInfo.getApiPackage()
+						.getFile(file.getName());
 				apiFile.delete();
 			} catch (Exception e) {
 				return new Status(IStatus.ERROR, null, null, e);
@@ -26,5 +27,4 @@ public class DeleteActionDelegate extends ActionDelegate {
 		return Status.OK_STATUS;
 	}
 
-	
 }

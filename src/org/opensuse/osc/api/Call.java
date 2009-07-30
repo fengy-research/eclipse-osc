@@ -37,25 +37,32 @@ public class Call {
 	public Result getResult() {
 		return result;
 	}
+
 	/**
-	 * Opens a HTTP connection. Feed the put/post with empty data if the method is POST or PUT.
+	 * Opens a HTTP connection. Feed the put/post with empty data if the method
+	 * is POST or PUT.
+	 * 
 	 * @return
 	 * @throws IOException
 	 */
 	protected HttpURLConnection openConnection() throws IOException {
 		return openConnection(null);
 	}
+
 	/**
-	 * Opens a HTTP connection. Feed the put/post data with stream if the method is POST or PUT.
+	 * Opens a HTTP connection. Feed the put/post data with stream if the method
+	 * is POST or PUT.
 	 * 
-	 * FIXME The inputstream should not be converted to an outputstream in this function.
-	 *       Because there is no way to report the progress from here. And because we
-	 *       do not introducing any eclipse dependency in osc.api. 
+	 * FIXME The inputstream should not be converted to an outputstream in this
+	 * function. Because there is no way to report the progress from here. And
+	 * because we do not introducing any eclipse dependency in osc.api.
+	 * 
 	 * @param stream
 	 * @return
 	 * @throws IOException
 	 */
-	protected HttpURLConnection openConnection(InputStream stream) throws IOException {
+	protected HttpURLConnection openConnection(InputStream stream)
+			throws IOException {
 		StringBuffer sb = new StringBuffer();
 		sb.append(api.host);
 		if (path.charAt(0) != '/') {
@@ -68,15 +75,15 @@ public class Call {
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setConnectTimeout(30000);
 		connection.setRequestMethod(method.toUpperCase());
-		if("POST".equals(method.toUpperCase())
-		|| "PUT".equals(method.toUpperCase())) {
+		if ("POST".equals(method.toUpperCase())
+				|| "PUT".equals(method.toUpperCase())) {
 			connection.setDoOutput(true);
 			OutputStream os = connection.getOutputStream();
-			if(stream != null) {
+			if (stream != null) {
 				BufferedInputStream bis = new BufferedInputStream(stream);
 				int n;
 				byte[] buffer = new byte[65536];
-				while((n = bis.read(buffer))> 0) {
+				while ((n = bis.read(buffer)) > 0) {
 					os.write(buffer, 0, n);
 				}
 			}

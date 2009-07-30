@@ -32,9 +32,11 @@ public class LinkAction {
 	public Type getType() {
 		return type;
 	}
+
 	public String getTargetFilename() {
 		return targetFilename;
 	}
+
 	public Package getOwner() {
 		return owner;
 	}

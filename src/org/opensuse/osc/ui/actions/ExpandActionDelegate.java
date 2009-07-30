@@ -14,7 +14,6 @@ import org.opensuse.osc.api.File;
 import org.opensuse.osc.api.Package;
 import org.opensuse.osc.core.OSCProject;
 import org.opensuse.osc.core.PackageInfo;
-import org.opensuse.osc.core.Patch;
 
 public class ExpandActionDelegate extends ActionDelegate {
 	@Override
@@ -24,80 +23,82 @@ public class ExpandActionDelegate extends ActionDelegate {
 			SubProgressMonitor mon;
 			try {
 				monitor.beginTask("Expanding a project", 5);
-				
+
 				monitor.subTask("Getting the package information");
 				OSCProject p = Plugin.getModel().getProject(projectHandle);
 				PackageInfo packageInfo = p.getPackageInfo();
 				// TODO expand it, create a folder and checkout files!
 				Package apiPackage = packageInfo.getApiPackage();
-				
+
 				/* Fetch package information from the server */
 				apiPackage.refresh();
 				monitor.worked(1);
-				
-				if(monitor.isCanceled()) {
+
+				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				
+
 				/* Only for a 'link' package */
-				if(!apiPackage.getIsLink()) {
-					return new Status(IStatus.ERROR, "Not a link package.", null);
+				if (!apiPackage.getIsLink()) {
+					return new Status(IStatus.ERROR, "Not a link package.",
+							null);
 				}
-				
+
 				monitor.subTask("Creating the folder");
 				/* Create the folder for the expanded files */
 				IFolder folderHandle = projectHandle.getFolder("origin");
 				mon = new SubProgressMonitor(monitor, 1);
-				if(!folderHandle.exists()) {
+				if (!folderHandle.exists()) {
 					folderHandle.create(true, true, mon);
 				} else {
 					mon.done();
 				}
-				
-				if(monitor.isCanceled()) {
+
+				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
 
-				monitor.subTask("Getting the link-target package's information");
+				monitor
+						.subTask("Getting the link-target package's information");
 				/* Fetch the link target package from the server */
 				Package linkApiPackage = apiPackage.getLinkTarget();
 				linkApiPackage.refresh();
 				monitor.worked(1);
 
-				if(monitor.isCanceled()) {
+				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				
+
 				monitor.subTask("Checking out files");
 				/* Check out all files in the link target package */
 				List<String> filenames = linkApiPackage.getFiles();
-				mon = new SubProgressMonitor(monitor, 1);	
+				mon = new SubProgressMonitor(monitor, 1);
 				mon.beginTask("Checking out files", filenames.size());
-				for(String filename : filenames) {
+				for (String filename : filenames) {
 					IFile fileHandle = folderHandle.getFile(filename);
 					File apiFile = linkApiPackage.getFile(filename);
 					SubProgressMonitor mon1 = new SubProgressMonitor(mon, 1);
-					if(!fileHandle.exists()) {
+					if (!fileHandle.exists()) {
 						fileHandle.create(apiFile.checkout(), true, mon1);
 					} else {
-						fileHandle.setContents(apiFile.checkout(), true, false, mon1);
+						fileHandle.setContents(apiFile.checkout(), true, false,
+								mon1);
 					}
 
-					if(monitor.isCanceled()) {
+					if (monitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
 					}
 				}
 
 			} catch (Exception e) {
-				return new Status(IStatus.ERROR, Plugin.PLUGIN_ID, e.getMessage(), e);
+				return new Status(IStatus.ERROR, Plugin.PLUGIN_ID, e
+						.getMessage(), e);
 			} finally {
 				monitor.done();
-				
+
 			}
 		}
 		return Status.OK_STATUS;
 	}
-
-
 
 }

@@ -21,8 +21,11 @@ public class Project extends Object {
 
 	@Override
 	public void refresh(int rev) throws OSCException {
-		if(!outDated) return;
+		if (!outDated)
+			return;
 		Result result = api.issue("get", uri + "/_meta");
+		/* FIXME use _meta with result.query */
+
 		outDated = false;
 	}
 

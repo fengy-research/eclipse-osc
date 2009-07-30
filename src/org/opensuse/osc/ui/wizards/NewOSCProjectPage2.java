@@ -9,8 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 public class NewOSCProjectPage2 extends WizardPage {
-	private Text oscprojectNameField;
-	private Text oscpackageNameField;
+
 	private Text hostField;
 	private Text usernameField;
 	private Text passwordField;

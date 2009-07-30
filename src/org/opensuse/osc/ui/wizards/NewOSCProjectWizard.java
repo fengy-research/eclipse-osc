@@ -35,7 +35,6 @@ import org.opensuse.osc.Plugin;
 import org.opensuse.osc.core.PackageInfo;
 
 public class NewOSCProjectWizard extends BasicNewProjectResourceWizard {
-	private static final String OP_ERROR = "ProjectWizard.op_error"; //$NON-NLS-1$
 
 	protected NewOSCProjectPage mainPage;
 	protected NewOSCProjectPage2 secondPage;

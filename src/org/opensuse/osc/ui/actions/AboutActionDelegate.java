@@ -14,7 +14,8 @@ public class AboutActionDelegate extends ActionDelegate {
 	public IStatus run(IProgressMonitor monitor) {
 		if (resource instanceof IProject) {
 			try {
-				OSCProject p = Plugin.getModel().getProject((IProject) resource);
+				OSCProject p = Plugin.getModel()
+						.getProject((IProject) resource);
 				PackageInfo packageInfo = p.getPackageInfo();
 				System.out.println(packageInfo.getApiPackage().toString());
 			} catch (Exception e) {
@@ -23,7 +24,5 @@ public class AboutActionDelegate extends ActionDelegate {
 		}
 		return Status.OK_STATUS;
 	}
-
-
 
 }

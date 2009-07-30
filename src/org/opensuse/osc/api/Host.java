@@ -7,16 +7,19 @@ public class Host extends Object {
 	Host(Api api) {
 		super(api, null, "/");
 	}
+
 	private List<String> projectNames;
+
 	@Override
 	public void refresh(int rev) throws OSCException {
-		if(!outDated) return;
+		if (!outDated)
+			return;
 		Result r = api.issue("get", "/about");
 		title = r.query("/about/title/text()");
 		description = r.query("/about/description/text()");
 		revision = r.query("/about/revision/text()");
 		r = api.issue("get", "/source");
-		projectNames =r.queryList("//entry/@name");
+		projectNames = r.queryList("//entry/@name");
 		outDated = false;
 	}
 
